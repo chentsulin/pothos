@@ -30,7 +30,9 @@ export interface SchemaTypes extends PothosSchemaTypes.UserSchemaTypes {
 }
 
 export type MergedScalars<PartialTypes extends Partial<PothosSchemaTypes.UserSchemaTypes>> =
-  DefaultsByVersion[keyof DefaultsByVersion extends PartialTypes['Defaults'] | undefined
+  PothosSchemaTypes.DefaultsByVersion[keyof PothosSchemaTypes.DefaultsByVersion extends
+    | PartialTypes['Defaults']
+    | undefined
     ? 'v4'
     : NonNullable<PartialTypes['Defaults']>] extends { Scalars: infer Defaults }
     ? SchemaTypes['Scalars'] & {
@@ -43,15 +45,6 @@ export type MergedScalars<PartialTypes extends Partial<PothosSchemaTypes.UserSch
           : never;
       }
     : never;
-
-export interface DefaultsByVersion {
-  v3: {
-    Scalars: V3DefaultScalars;
-  };
-  v4: {
-    Scalars: DefaultScalars;
-  };
-}
 
 export interface DefaultScalars {
   String: { Input: string; Output: string };
