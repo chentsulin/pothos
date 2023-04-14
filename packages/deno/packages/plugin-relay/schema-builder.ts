@@ -226,7 +226,7 @@ schemaBuilderProto.node = function node(param, { interfaces, extensions, id, ...
     const nodeRef = new NodeRef(ref.name, {
         parseId: id.parse,
     });
-    this.configStore.associateRefWithName(nodeRef, ref.name);
+    this.configStore.associateParamWithRef(nodeRef, ref);
     return nodeRef as never;
 };
 schemaBuilderProto.globalConnectionField = function globalConnectionField(name, field) {

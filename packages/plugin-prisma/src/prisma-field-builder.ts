@@ -135,6 +135,16 @@ export class PrismaObjectFieldBuilder<
             connectionOptions:
               | ObjectRef<
                   Types,
+                  ShapeFromConnection<
+                    PothosSchemaTypes.ConnectionShapeHelper<
+                      Types,
+                      TypesForRelation<Types, Model, Field>['Shape'],
+                      false
+                    >
+                  >
+                >
+              | ObjectRef<
+                  Types,
                   ShapeFromConnection<PothosSchemaTypes.ConnectionShapeHelper<Types, Shape, false>>
                 >
               | PothosSchemaTypes.ConnectionObjectOptions<
@@ -143,12 +153,7 @@ export class PrismaObjectFieldBuilder<
                     Types,
                     ShapeFromTypeParam<
                       Types,
-                      [
-                        ObjectRef<
-                          Types,
-                          Model['Relations'][Field & keyof Model['Relations']]['Shape']
-                        >,
-                      ],
+                      [ObjectRef<Types, TypesForRelation<Types, Model, Field>['Shape']>],
                       Nullable
                     >
                   >,
@@ -158,12 +163,7 @@ export class PrismaObjectFieldBuilder<
                     Types,
                     ShapeFromTypeParam<
                       Types,
-                      [
-                        ObjectRef<
-                          Types,
-                          Model['Relations'][Field & keyof Model['Relations']]['Shape']
-                        >,
-                      ],
+                      [ObjectRef<Types, TypesForRelation<Types, Model, Field>['Shape']>],
                       Nullable
                     >,
                     Shape,
@@ -286,7 +286,7 @@ export class PrismaObjectFieldBuilder<
     };
 
     const cursorSelection = ModelLoader.getCursorSelection(
-      ref,
+      ref as never,
       relationField.type,
       cursorValue,
       this.builder,
@@ -442,6 +442,7 @@ export class PrismaObjectFieldBuilder<
     this.model = model;
     this.prismaFieldMap = fieldMap;
     this.typename = typename;
+    this.builder = builder;
   }
 
   relation<
@@ -645,7 +646,12 @@ export class PrismaObjectFieldBuilder<
     return <
       Nullable extends boolean,
       ResolveReturnShape,
-      Name extends CompatibleTypes<Types, Model['Shape'], Type, true>,
+      Name extends CompatibleTypes<
+        Types,
+        Model['Shape'],
+        Type,
+        Type extends [unknown] ? { list: true; items: true } : true
+      >,
     >(
       name: Name,
       ...args: NormalizeArgs<

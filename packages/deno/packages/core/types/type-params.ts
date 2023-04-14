@@ -1,8 +1,9 @@
 // @ts-nocheck
-import type ArgumentRef from '../refs/arg.ts';
-import type InputFieldRef from '../refs/input-field.ts';
-import type InterfaceRef from '../refs/interface.ts';
-import type ObjectRef from '../refs/object.ts';
+import type { ArgumentRef } from '../refs/arg.ts';
+import { BaseTypeRef } from '../refs/base.ts';
+import type { InputFieldRef } from '../refs/input-field.ts';
+import type { InterfaceRef } from '../refs/interface.ts';
+import type { ObjectRef } from '../refs/object.ts';
 import type { RootName, SchemaTypes } from './schema-types.ts';
 export const outputShapeKey = Symbol.for("Pothos.outputShapeKey");
 export const parentShapeKey = Symbol.for("Pothos.parentShapeKey");
@@ -41,7 +42,7 @@ export interface OutputRef<T = unknown> {
 export interface InputRef<T = unknown> {
     [inputShapeKey]: T;
     name: string;
-    kind: "Enum" | "InputObject" | "Scalar" | "InputList";
+    kind: "Enum" | "InputList" | "InputObject" | "Scalar";
 }
 export type OutputType<Types extends SchemaTypes> = BaseEnum | keyof Types["outputShapes"]
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,7 +52,7 @@ export type OutputType<Types extends SchemaTypes> = BaseEnum | keyof Types["outp
 export type InputType<Types extends SchemaTypes> = BaseEnum | keyof Types["inputShapes"] | {
     [inputShapeKey]: unknown;
 };
-export type ConfigurableRef<Types extends SchemaTypes> = InputType<Types> | OutputType<Types> | RootName;
+export type ConfigurableRef<Types extends SchemaTypes> = BaseTypeRef<Types, unknown> | InputType<Types> | OutputType<Types> | RootName;
 export type TypeParam<Types extends SchemaTypes> = OutputType<Types> | [
     OutputType<Types>
 ];

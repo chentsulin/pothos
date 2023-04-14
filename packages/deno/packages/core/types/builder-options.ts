@@ -1,13 +1,13 @@
 // @ts-nocheck
 import type { GraphQLResolveInfo } from 'https://cdn.skypack.dev/graphql?dts';
-import type ArgumentRef from '../refs/arg.ts';
-import type InputFieldRef from '../refs/input-field.ts';
-import type InterfaceRef from '../refs/interface.ts';
-import type ObjectRef from '../refs/object.ts';
+import type { ArgumentRef } from '../refs/arg.ts';
+import type { InputFieldRef } from '../refs/input-field.ts';
+import type { InterfaceRef } from '../refs/interface.ts';
+import type { ObjectRef } from '../refs/object.ts';
 import type { SchemaTypes, VersionedSchemaBuilderOptions } from './schema-types.ts';
 import type { BaseEnum, EnumParam, FieldNullability, GenericFieldRef, GenericInputFieldRef, inputFieldShapeKey, InputRef, InterfaceParam, ObjectParam, ParentShape as GetParentShape, ShapeFromTypeParam, TypeParam, } from './type-params.ts';
 import type { MaybePromise, Merge, Normalize, NormalizeNullableFields, RemoveNeverKeys, } from './utils.ts';
-export type AddVersionedDefaultsToBuilderOptions<Types extends SchemaTypes, Version extends keyof VersionedSchemaBuilderOptions<SchemaTypes>> = PothosSchemaTypes.SchemaBuilderOptions<Types> extends infer Options ? VersionedSchemaBuilderOptions<Types>[Version] extends infer Defaults ? RemoveNeverKeys<Omit<Options, keyof Defaults> & Defaults> : never : never;
+export type AddVersionedDefaultsToBuilderOptions<Types extends SchemaTypes, Version extends keyof VersionedSchemaBuilderOptions<SchemaTypes>> = PothosSchemaTypes.SchemaBuilderOptions<Types> extends infer Options ? VersionedSchemaBuilderOptions<Types>[Version] extends infer Defaults ? RemoveNeverKeys<Defaults & Omit<Options, keyof Defaults>> : never : never;
 export type NormalizeSchemeBuilderOptions<Types extends SchemaTypes> = RemoveNeverKeys<PothosSchemaTypes.SchemaBuilderOptions<Types>>;
 export type Resolver<Parent, Args, Context, Type, Return = unknown> = (parent: Parent, args: Args, context: Context, info: GraphQLResolveInfo) => [
     Type
@@ -49,12 +49,12 @@ export type EnumTypeOptions<Types extends SchemaTypes, Param extends EnumParam, 
     name: string;
     values?: Partial<Record<keyof Param, Omit<PothosSchemaTypes.EnumValueConfig<Types>, "value">>>;
 }> : PothosSchemaTypes.EnumTypeOptions<Types, Values>;
-export type ArgBuilder<Types extends SchemaTypes> = PothosSchemaTypes.InputFieldBuilder<Types, "Arg">["field"] & Omit<PothosSchemaTypes.InputFieldBuilder<Types, "Arg">, "field">;
+export type ArgBuilder<Types extends SchemaTypes> = Omit<PothosSchemaTypes.InputFieldBuilder<Types, "Arg">, "field"> & PothosSchemaTypes.InputFieldBuilder<Types, "Arg">["field"];
 export type ValidateInterfaces<Shape, Types extends SchemaTypes, Interfaces extends InterfaceParam<Types>> = Interfaces extends InterfaceParam<Types> ? Shape extends GetParentShape<Types, Interfaces> ? Interfaces : "Object shape must extend interface shape" : never;
 export type InputShapeFromFields<Fields extends InputFieldMap> = NormalizeNullableFields<{
     [K in string & keyof Fields]: InputShapeFromField<Fields[K]>;
 }>;
-export type InputFieldsFromShape<Types extends SchemaTypes, Shape, Kind extends "InputObject" | "Arg"> = {
+export type InputFieldsFromShape<Types extends SchemaTypes, Shape, Kind extends "Arg" | "InputObject"> = {
     [K in keyof Shape]: Kind extends "Arg" ? ArgumentRef<Types, Shape[K]> : Kind extends "InputObject" ? InputFieldRef<Types, Shape[K]> : never;
 };
 export type InputShapeFromField<Field extends GenericInputFieldRef> = Field extends {
@@ -66,9 +66,9 @@ export type CompatibleTypes<Types extends SchemaTypes, ParentShape, Type extends
     [K in keyof ParentShape]-?: Awaited<ParentShape[K]> extends ShapeFromTypeParam<Types, Type, Nullable> ? K : never;
 }[keyof ParentShape] & string;
 export type ExposeNullability<Types extends SchemaTypes, Type extends TypeParam<Types>, ParentShape, Name extends keyof ParentShape, Nullable extends FieldNullability<Type>> = Awaited<ParentShape[Name]> extends ShapeFromTypeParam<Types, Type, Nullable> ? {
-    nullable?: Nullable & ExposeNullableOption<Types, Type, ParentShape, Name>;
+    nullable?: ExposeNullableOption<Types, Type, ParentShape, Name> & Nullable;
 } : {
-    nullable: Nullable & ExposeNullableOption<Types, Type, ParentShape, Name>;
+    nullable: ExposeNullableOption<Types, Type, ParentShape, Name> & Nullable;
 };
 export type ExposeNullableOption<Types extends SchemaTypes, Type extends TypeParam<Types>, ParentShape, Name extends keyof ParentShape> = FieldNullability<Type> & (Type extends [
     unknown

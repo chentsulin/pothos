@@ -60,7 +60,7 @@ export interface DefaultScalars {
     };
     ID: {
         Input: string;
-        Output: number | string | bigint;
+        Output: bigint | number | string;
     };
     Int: {
         Input: number;
