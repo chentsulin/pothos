@@ -11,8 +11,6 @@ export class InputFieldRef<Types extends SchemaTypes, T = unknown> {
 
   fieldName?: string;
 
-  options: PothosSchemaTypes.InputObjectFieldOptions<Types> | null;
-
   $inferInput!: T;
 
   [inputFieldShapeKey]!: T;

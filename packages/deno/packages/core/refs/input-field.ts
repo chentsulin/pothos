@@ -4,7 +4,6 @@ import { inputFieldShapeKey, PothosInputFieldConfig, PothosTypeConfig, SchemaTyp
 export class InputFieldRef<Types extends SchemaTypes, T = unknown> {
     kind = "InputObject" as const;
     fieldName?: string;
-    options: PothosSchemaTypes.InputObjectFieldOptions<Types> | null;
     $inferInput!: T;
     [inputFieldShapeKey]!: T;
     protected pendingActions: ((config: PothosInputFieldConfig<Types>) => PothosInputFieldConfig<Types> | void)[] = [];
